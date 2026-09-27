@@ -57,4 +57,23 @@ public class PhotoController {
                 .contentType(MediaType.parseMediaType(photo.contentType()))
                 .body(photo.data());
     }
+
+    @GetMapping("/debug/env")
+    public ResponseEntity<String> debugEnv() {
+
+        boolean accessKeyExists =
+                System.getenv("AWS_ACCESS_KEY_ID") != null;
+
+        boolean secretKeyExists =
+                System.getenv("AWS_SECRET_ACCESS_KEY") != null;
+
+        boolean regionExists =
+                System.getenv("AWS_REGION") != null;
+
+        return ResponseEntity.ok(
+                "AWS_ACCESS_KEY_ID: " + accessKeyExists +
+                        "\nAWS_SECRET_ACCESS_KEY: " + secretKeyExists +
+                        "\nAWS_REGION: " + regionExists
+        );
+    }
 }
