@@ -10,7 +10,39 @@ Photo Gallery is a Java and Spring Boot REST API for uploading, listing, viewing
 
 ## Installation
 
-You need Java 21, access to the S3 bucket, and AWS credentials configured for the SDK (for example, through an AWS profile or environment variables). The credentials must allow uploading, listing, reading, and deleting objects in the bucket.
+You need Java 21 and an AWS account with access to S3.
+
+### S3 setup
+
+1. Create an S3 bucket named `gustavo-photo-gallery-2026` in `us-east-1`, or obtain access to that existing bucket. The bucket name and region are currently fixed in the application code.
+2. Give the IAM user whose access keys the application will use this policy (replace `gustavo-photo-gallery-2026` in the policy only if you also change the bucket name in `S3Service.java`):
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": "s3:ListBucket",
+         "Resource": "arn:aws:s3:::gustavo-photo-gallery-2026"
+       },
+       {
+         "Effect": "Allow",
+         "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
+         "Resource": "arn:aws:s3:::gustavo-photo-gallery-2026/*"
+       }
+     ]
+   }
+   ```
+
+3. Set the credentials in the environment where the application runs:
+
+   ```bash
+   export APP_AWS_ACCESS_KEY_ID="your-access-key-id"
+   export APP_AWS_SECRET_ACCESS_KEY="your-secret-access-key"
+   ```
+
+   Set the same two environment variables in your deployment platform when deploying. Keep the secret out of the repository. The application uses these `APP_` variables directly; `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, and AWS profiles do not configure this S3 client. The region is fixed to `us-east-1` in `S3Config.java`.
 
 From the project directory, run:
 

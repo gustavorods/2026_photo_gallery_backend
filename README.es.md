@@ -10,7 +10,39 @@ Photo Gallery es una API REST en Java y Spring Boot para subir, listar, ver y el
 
 ## Instalación
 
-Necesitas Java 21, acceso al bucket S3 y credenciales de AWS configuradas para el SDK (por ejemplo, mediante un perfil de AWS o variables de entorno). Las credenciales deben permitir subir, listar, leer y eliminar objetos del bucket.
+Necesitas Java 21 y una cuenta AWS con acceso a S3.
+
+### Configuración de S3
+
+1. Crea un bucket S3 llamado `gustavo-photo-gallery-2026` en la región `us-east-1`, u obtén acceso a ese bucket si ya existe. El nombre del bucket y la región están definidos directamente en el código de la aplicación.
+2. Asigna al usuario IAM cuyas claves de acceso utilizará la aplicación la siguiente política (cambia `gustavo-photo-gallery-2026` en la política solo si también cambias el nombre del bucket en `S3Service.java`):
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": "s3:ListBucket",
+         "Resource": "arn:aws:s3:::gustavo-photo-gallery-2026"
+       },
+       {
+         "Effect": "Allow",
+         "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
+         "Resource": "arn:aws:s3:::gustavo-photo-gallery-2026/*"
+       }
+     ]
+   }
+   ```
+
+3. Configura las credenciales en el entorno donde se ejecuta la aplicación:
+
+   ```bash
+   export APP_AWS_ACCESS_KEY_ID="tu-clave-de-acceso"
+   export APP_AWS_SECRET_ACCESS_KEY="tu-clave-secreta"
+   ```
+
+   Para el despliegue, configura esas mismas dos variables de entorno en la plataforma utilizada. No guardes la clave secreta en el repositorio. La aplicación lee directamente las variables con prefijo `APP_`; `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` y los perfiles AWS no configuran este cliente S3. La región está fijada en `us-east-1` en `S3Config.java`.
 
 Desde el directorio del proyecto, ejecuta:
 
